@@ -2,8 +2,8 @@
 import axios from "axios";
 
 // Base URL for your API (assuming you have a backend)
-// const BASE_URL = "https://libback-eh51.onrender.com/api/students";
-const BASE_URL = "http://localhost:7000/api/students";
+const BASE_URL = "https://libback-eh51.onrender.com/api/students";
+// const BASE_URL = "http://localhost:7000/api/students";
 
 // Get all students
 export const getStudents = async () => {
