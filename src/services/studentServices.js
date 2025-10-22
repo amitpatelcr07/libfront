@@ -2,8 +2,8 @@
 import axios from "axios";
 
 // Base URL for your API (assuming you have a backend)
-const BASE_URL = "https://libback-eh51.onrender.com/api/students";
-// const BASE_URL = "http://localhost:7000/api/students";
+// const BASE_URL = "https://libback-eh51.onrender.com/api/students";
+const BASE_URL = "http://localhost:7000/api/students";
 
 // Get all students
 export const getStudents = async () => {
@@ -30,7 +30,12 @@ export const getStudentById = async (id) => {
 // Create a new student
 export const createStudent = async (studentData) => {
   try {
-    const response = await axios.post(BASE_URL, studentData);
+    console.log("studentData in service:", studentData);
+    const response = await axios.post(BASE_URL, studentData, {
+      headers: {
+        "Content-Type": "multipart/form-data", // optional; axios can detect automatically
+      },
+    });
     return response.data; // returns the created student's data
   } catch (error) {
     console.error("Error creating student:", error);

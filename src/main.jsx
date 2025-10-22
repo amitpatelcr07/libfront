@@ -5,11 +5,13 @@ import MainLayout from "./layouts/MainLayout.jsx";
 
 import "./index.css";
 
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <StrictMode>
     
      <BrowserRouter>
        <MainLayout />
+       {/* <App /> */}
      </BrowserRouter>
     
   </StrictMode>

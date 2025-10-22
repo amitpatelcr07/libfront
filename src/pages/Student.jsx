@@ -1,11 +1,11 @@
 
-import StudenCard from "./StudenCard";
+import StudentCard from "./StudentCard";
 
 const Student = () => {
  
   return (
     <div className="container mx-auto p-6">
-    <StudenCard/>
+    <StudentCard/>
     
       <div className="mt-6">
         <a

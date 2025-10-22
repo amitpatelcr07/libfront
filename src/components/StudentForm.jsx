@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { createStudent } from "../services/studentServices";
-import { Link ,useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+
 const StudentForm = () => {
-  const [submit,setSubmit]=useState(false);
- 
+  const [submit, setSubmit] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,31 +13,69 @@ const StudentForm = () => {
     fees: "",
     status: "active",
     batchTime: "",
+    image: null, // added for image
   });
-  const navigate=useNavigate();
+
+  const [imagePreview, setImagePreview] = useState(null); // for preview
+
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log("amit", name);
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
-    
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    console.log("Selected file:", file);
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file, // store the file
+      }));
+      setImagePreview(URL.createObjectURL(file)); // preview
+    }
+    console.log("imageprevide", imagePreview);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-     setSubmit(true);
-    const finalData = {
-      ...formData,
-      fees: parseFloat(formData.fees),
-    };
+    setSubmit(true);
 
-    // Function to add a new student
+    const finalData = new FormData(); // use FormData to send image
+    finalData.append("name", formData.name);
+    finalData.append("email", formData.email);
+    finalData.append("password", formData.password);
+    finalData.append("address", formData.address);
+    finalData.append("fees", parseFloat(formData.fees));
+    finalData.append("status", formData.status);
+    finalData.append("batchTime", formData.batchTime);
+
+    if (formData.image) finalData.append("image", formData.image); // 👈 correct
+    else console.log("No image file selected.");
+
+    console.log("formdata1", formData);
+
     const AddStudent = async () => {
       try {
-        await createStudent(finalData); // Assuming API call
+        await createStudent(formData); // backend should handle FormData
         navigate("/");
         alert("Student created successfully!");
+        // reset form
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          address: "",
+          fees: "",
+          status: "active",
+          batchTime: "",
+          image: null,
+        });
       } catch (error) {
         console.error("Error creating student:", error);
         alert("Failed to create student.");
@@ -44,18 +83,8 @@ const StudentForm = () => {
     };
 
     AddStudent();
-    
-    // Optionally reset form
-    setFormData({
-      name: "",
-      email: "",
-      password: "",
-      address: "",
-      fees: "",
-      status: "active",
-      batchTime: "",
-    });
-    
+
+    setImagePreview(null);
   };
 
   return (
@@ -68,7 +97,7 @@ const StudentForm = () => {
 
       <h2 className="text-2xl font-bold text-center mb-6">Student Form</h2>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Name and Email */}
         <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
           <div className="md:w-1/2">
@@ -160,6 +189,35 @@ const StudentForm = () => {
           </div>
         </div>
 
+        {/* Image Upload */}
+        <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
+          <div className="md:w-1/2">
+            <label className="block text-gray-700 font-medium mb-1">
+              Upload Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-gray-500
+                         file:mr-4 file:py-2 file:px-4
+                         file:rounded file:border-0
+                         file:text-sm file:font-semibold
+                         file:bg-blue-50 file:text-blue-700
+                         hover:file:bg-blue-100"
+            />
+          </div>
+          {imagePreview && (
+            <div className="md:w-1/2">
+              <img
+                src={imagePreview}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded border"
+              />
+            </div>
+          )}
+        </div>
+
         {/* Batch Time and Submit */}
         <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0 items-end">
           <div className="md:w-1/2">
@@ -183,7 +241,6 @@ const StudentForm = () => {
 
           <button
             type="submit"
-            onClick={handleSubmit}
             className="md:w-1/2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
           >
             Submit

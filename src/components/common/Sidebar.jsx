@@ -12,7 +12,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-gray-100 h-screen shadow-md p-4 -m-2">
+    <aside className="w-64 bg-gray-900 h-screen shadow-md p-4 -m-2">
       <h2 className="text-lg font-extrabold mb-6">Menu</h2>
       <ul className="space-y-2">
         {menuItems.map((item) => (

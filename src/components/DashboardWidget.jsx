@@ -3,6 +3,8 @@ import { getStudents } from "../services/studentServices";
 import StudentForm from "../components/StudentForm.jsx"; // 👈 your form
 import { Link } from "react-router-dom";
 import bookServices from "../services/bookServices.js";
+import AnimatedBookList from "./common/AnimatedBookList.jsx";
+import AnimatedStudenList from "./common/AnimatedStudenList.jsx";
 const Dashboard = () => {
   const [totalStudents, setTotalStudents] = useState(0);
   const [totalBooks, setTotalBooks] = useState(0);
@@ -17,7 +19,7 @@ const Dashboard = () => {
     // Load students from API
     getStudents()
       .then((data) => {
-        console.log("Fetched students data:", data);
+        console.log("Students data:aryan", data);
         setTotalStudents(data.length);
         setRecentStudents(data.slice(-3).reverse());
       })
@@ -26,38 +28,15 @@ const Dashboard = () => {
       });
   }, []);
 
-  const dummyBooks = [
-    {
-      title: "JavaScript Essentials",
-      isIssued: true,
-      isOverdue: false,
-    },
-    {
-      title: "Data Structures in C",
-      isIssued: true,
-      isOverdue: true,
-    },
-    {
-      title: "The Alchemist",
-      isIssued: false,
-      isOverdue: false,
-    },
-    {
-      title: "React for Beginners",
-      isIssued: true,
-      isOverdue: false,
-    },
-  ];
-
   // Dummy books data
   useEffect(() => {
     const fetchBooks = async () => {
       try {
         const data = await bookServices.getBooks();
-        console.log("Books data:", data);
+
         setBookData(data);
         setRecentBooks(data.slice(-3).reverse());
-        console.log("Recent Books:", data.slice(-3).reverse());
+
         const issuedCount = data.filter((book) => book.isIssued).length;
         setBooksIssued(issuedCount);
         setTotalBooks(data.length);
@@ -123,7 +102,7 @@ const Dashboard = () => {
         {/* Recent Students */}
         <div className="bg-white shadow rounded-lg p-6">
           <h3 className="font-semibold mb-4">Recent Students</h3>
-          <ul className="space-y-2">
+          {/* <ul className="space-y-2">
             {recentStudents.length === 0 ? (
               <li className="text-gray-500">No recent students found.</li>
             ) : (
@@ -133,21 +112,23 @@ const Dashboard = () => {
                 </li>
               ))
             )}
-          </ul>
+          </ul> */}
+          <AnimatedStudenList recengStudents={recentStudents} />
         </div>
 
         {/* Recent Books */}
         <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="font-semibold mb-4">Recent Books</h3>
-          <ul className="space-y-2">
+          <h3 className="font-    semibold mb-4">Recent Books</h3>
+          {/* <ul className="space-y-2">
             {recentBooks.map((book, index) => (
               <li key={index} className="border-b pb-2">
-                <span className="text-pink-500 font-medium">
+                <span className="text-green-500 font-medium">
                   {book.title} – {book.isIssued ? "Issued" : "Available"}
                 </span>{" "}
               </li>
             ))}
-          </ul>
+          </ul> */}
+          <AnimatedBookList recentBooks={recentBooks} />
         </div>
       </div>
 
