@@ -19,7 +19,7 @@ const StudentCard = () => {
     getStudents()
       .then((data) => {
         console.log("Fetched students1:", data); 
-        setStudents(data); 
+        setStudents(data.reverse()); 
       })
       .catch((error) => {
         console.error("Error fetching students:", error);
