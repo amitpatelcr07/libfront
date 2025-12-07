@@ -89,7 +89,7 @@ const AdminRegister = () => {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out placeholder-gray-400"
               placeholder="Min 8 characters"
               required
-              minLength="8"
+              minLength="5"
             />
           </div>
 

@@ -1,8 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { logout } from ".././redux/authSlice.js"; // Assuming you've created this action in authSlice
-import { logout } from "../../redux/authSlice.js"; // Assuming you've created this action in authSlice  
+
+import { logout } from "../../redux/authSlice.js"; // Assuming you've created this action in authSlice
 const Header = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth); // Get authentication state from Redux
@@ -62,7 +62,7 @@ const Header = () => {
                 <li>
                   <button
                     onClick={handleLogout}
-                    className="bg-red-600 px-4 py-2 text-white rounded hover:bg-red-700"
+                    className="bg-red-600 px-2 py-1 text-white rounded hover:bg-red-700"
                   >
                     Logout
                   </button>
