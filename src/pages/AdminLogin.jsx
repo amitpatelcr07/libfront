@@ -83,7 +83,7 @@ const AdminLogin = () => {
               <p className="text-gray-800">
                 <span className="font-medium text-gray-600">Username:</span>{" "}
                 <code className="font-bold text-indigo-700">
-                  xyza@gmail.com
+                  demoid1@gmail.com
                 </code>
               </p>
               <p className="text-gray-800">

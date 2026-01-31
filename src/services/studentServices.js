@@ -1,14 +1,11 @@
 // src/services/studentServices.js
 import axios from "axios";
 
-const BASE_URL = "https://libback-eh51.onrender.com/api/students";
-
-
-
+// const BASE_URL = "https://libback-eh51.onrender.com/api/students";      // for live producton
+const BASE_URL = "http://localhost:7000/api/students";                     // for local development
 
 // Get all students
 export const getStudents = async () => {
- 
   try {
     const response = await axios.get(BASE_URL);
     return response.data; // returns student data
@@ -49,20 +46,26 @@ export const createStudent = async (studentData) => {
 export const updateStudent = async (id, studentData) => {
   try {
     const response = await axios.put(`${BASE_URL}/${id}`, studentData);
+    console.log("Update response data:", response.data);
     return response.data; // returns updated student data
   } catch (error) {
-    console.error("Error updating student:", error);
-    throw error;
+    const message = error.response?.data?.message || "Update failed";
+
+    throw new Error(message);
   }
 };
 
-// Delete a student
+
+
 export const deleteStudent = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/${id}`);
-    return response.data; // returns a success message or the deleted student's data
+    return response.data; 
   } catch (error) {
-    console.error("Error deleting student:", error);
-    throw error;
+    
+    const message = error.response?.data?.message || "Delete failed";
+
+   
+    throw new Error(message);
   }
 };

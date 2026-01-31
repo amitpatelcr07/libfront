@@ -6,7 +6,8 @@ import {
 } from "../services/studentServices"; // Assuming these API functions exist
 import { Link } from "react-router-dom";
 import image from '../../public/image.png'
-
+import { toast } from "react-toastify";
+const PROTECTED_STUDENT_ID = "697ce88d52194a7634e37cca";
 
 const StudentCard = () => {
   const imgurl = image; 
@@ -50,26 +51,36 @@ const StudentCard = () => {
       alert("Student deleted successfully!");
     } catch (error) {
       console.error("Error deleting student:", error);
-      alert("Failed to delete student.");
+      // alert(`Failed to delete student: ${error.message}`);
+      toast.error(error.message);
     }
   };
 
   
   const handleEdit = (studentId) => {
     
-    setEditStudentId(studentId);
-    alert(`Edit student with ID: ${studentId}`);
+    try{
+      if (studentId == PROTECTED_STUDENT_ID) {
+        toast.error("This student is protected and cannot be edited.");
+        return;
+      } else {
+        setEditStudentId(studentId);
+        toast.info("Redirecting to edit page...");
+      }
+    }catch(error){
+      toast.error("Error in editing student:"+ error.message);
+    }
 
   };
   useEffect(() => {
     if (editStudentId) {
-      // Logic to navigate to edit page or open modal can be added here
+      
       const fetchStudentForEdit = async () => {
         try {
           // Assuming getStudentById is a function that fetches student details by ID
           const studentData = await getStudentById(editStudentId);
           console.log("Student data for editing:", studentData);
-          // You can set this data to a state to pre-fill an edit form
+         
         } catch (error) {
           console.error("Error fetching student for edit:", error);
         }
@@ -154,14 +165,16 @@ const StudentCard = () => {
                   {/* Actions */}
                   <td className="px-4 py-3 flex space-x-2">
                     {/* Edit Button */}
-                    <Link to={`/students/${student._id}`}>
-                      <button
-                        onClick={() => handleEdit(student._id)}
-                        className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition"
-                      >
-                        Edit
-                      </button>
-                    </Link>
+                    {student._id !== PROTECTED_STUDENT_ID && (
+                      <Link to={`/students/${student._id}`}>
+                        <button
+                          onClick={() => handleEdit(student._id)}
+                          className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition"
+                        >
+                          Edit
+                        </button>
+                      </Link>
+                    )}
 
                     {/* Delete Button */}
                     <button
