@@ -7,7 +7,9 @@ import {
 import { Link } from "react-router-dom";
 import image from '../../public/image.png'
 import { toast } from "react-toastify";
-const PROTECTED_STUDENT_ID = "697da75b11b5fd7b48e6ffae";
+
+const PROTECTED_STUDENT_ID = "697dba3c4382d33f213a7432";
+
 
 const StudentCard = () => {
   const imgurl = image; 

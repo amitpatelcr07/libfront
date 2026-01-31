@@ -1,8 +1,8 @@
 // src/services/studentServices.js
 import axios from "axios";
 
-// const BASE_URL = "https://libback-eh51.onrender.com/api/students";      // for live producton
-const BASE_URL = "http://localhost:7000/api/students";                     // for local development
+const BASE_URL = "https://libback-eh51.onrender.com/api/students";      // for live producton
+// const BASE_URL = "http://localhost:7000/api/students";                     // for local development
 
 // Get all students
 export const getStudents = async () => {
