@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
 import Header from "../components/common/Header.jsx";
 import Footer from "../components/common/Footer.jsx";
 import Sidebar from "../components/common/Sidebar.jsx";
@@ -7,43 +8,49 @@ import AppRoutes from "../routes/AppRoutes.jsx";
 
 const MainLayout = () => {
   const location = useLocation();
+  const { isAuthenticated } = useSelector((state) => state.auth);
 
-  // Hide layout on login or register pages
+  // Hide layout on login or register pages OR if not authenticated
   const hideLayout =
-    location.pathname === "/login" || location.pathname === "/register";
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    !isAuthenticated;
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header */}
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Header - Only show if authenticated and not on auth pages */}
       {!hideLayout && <Header />}
 
-      {/* Main Content Area with Sidebar - Add mt-16 for fixed header */}
+      {/* Main Content Area */}
       {!hideLayout ? (
-        <div className="flex flex-1 mt-16">
-          {/* Sidebar - Desktop Only, Mobile handled by Sidebar component */}
-          <div className="hidden lg:block">
-            <Sidebar />
+        <>
+          {/* With Sidebar and Header */}
+          <div className="flex flex-1 mt-16">
+            {/* Sidebar - Desktop Only */}
+            <div className="hidden lg:block">
+              <Sidebar />
+            </div>
+
+            {/* Mobile Sidebar */}
+            <div className="lg:hidden">
+              <Sidebar />
+            </div>
+
+            {/* Main Content */}
+            <main className="flex-1 bg-gray-100 p-4 sm:p-6 overflow-y-auto">
+              <AppRoutes />
+            </main>
           </div>
 
-          {/* Mobile Sidebar - Handled by Sidebar component with fixed positioning */}
-          <div className="lg:hidden">
-            <Sidebar />
-          </div>
-
-          {/* Main Content */}
-          <main className="flex-1 bg-gray-100 p-4 sm:p-6 overflow-y-auto">
-            <AppRoutes />
-          </main>
-        </div>
+          {/* Footer */}
+          <Footer />
+        </>
       ) : (
-        // Full-screen login/register page
-        <main className="flex-1 bg-gray-100 flex items-center justify-center">
+        // Full-screen login/register page (no header, sidebar, footer)
+        <main className="flex-1 flex items-center justify-center bg-gray-100">
           <AppRoutes />
         </main>
       )}
-
-      {/* Footer */}
-      {!hideLayout && <Footer />}
     </div>
   );
 };
