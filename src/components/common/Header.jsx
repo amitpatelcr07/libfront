@@ -8,7 +8,7 @@ const Header = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+console.log("Header user:", isAuthenticated);
   // Handle Logout
   const handleLogout = () => {
     dispatch(logout());
@@ -68,7 +68,7 @@ const Header = () => {
             ) : (
               <>
                 <li>
-                  <span className="text-white">Welcome, {user?.name}</span>
+                  <span className="text-white">Welcome, {user}</span>
                 </li>
                 <li>
                   <button

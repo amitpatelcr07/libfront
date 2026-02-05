@@ -5,50 +5,55 @@ import {
   getStudentById,
 } from "../services/studentServices"; // Assuming these API functions exist
 import { Link } from "react-router-dom";
-import image from '../../public/image.png'
+import image from "../../public/image.png";
 import { toast } from "react-toastify";
 
 const PROTECTED_STUDENT_ID = "697dba3c4382d33f213a7432";
 
-
 const StudentCard = () => {
-  const imgurl = image; 
+  const imgurl = image;
   const [students, setStudents] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [studentsPerPage] = useState(8); 
+  const [studentsPerPage] = useState(8);
   const [editStudentId, setEditStudentId] = useState(null);
 
   useEffect(() => {
     getStudents()
       .then((data) => {
-        console.log("Fetched students1:", data); 
-        setStudents(data.reverse()); 
+        console.log("Fetched students1:", data);
+        setStudents(data.reverse());
       })
       .catch((error) => {
         console.error("Error fetching students:", error);
       });
   }, []);
 
+  // Filter students based on search term
+  const filteredStudents = students.filter((student) =>
+    student.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   // Calculate the current students to display
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
-  const currentStudents = students.slice(
+  const currentStudents = filteredStudents.slice(
     indexOfFirstStudent,
-    indexOfLastStudent
+    indexOfLastStudent,
   );
 
   // Change page
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Calculate total pages
-  const totalPages = Math.ceil(students.length / studentsPerPage);
+  // Calculate total pages based on filtered results
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
 
   // Delete student
   const handleDelete = async (studentId) => {
     try {
       await deleteStudent(studentId); // Assuming deleteStudent API function
       setStudents((prevStudents) =>
-        prevStudents.filter((student) => student.id !== studentId)
+        prevStudents.filter((student) => student.id !== studentId),
       );
       alert("Student deleted successfully!");
     } catch (error) {
@@ -58,10 +63,8 @@ const StudentCard = () => {
     }
   };
 
-  
   const handleEdit = (studentId) => {
-    
-    try{
+    try {
       if (studentId == PROTECTED_STUDENT_ID) {
         toast.error("This student is protected and cannot be edited.");
         return;
@@ -69,20 +72,17 @@ const StudentCard = () => {
         setEditStudentId(studentId);
         toast.info("Redirecting to edit page...");
       }
-    }catch(error){
-      toast.error("Error in editing student:"+ error.message);
+    } catch (error) {
+      toast.error("Error in editing student:" + error.message);
     }
-
   };
   useEffect(() => {
     if (editStudentId) {
-      
       const fetchStudentForEdit = async () => {
         try {
           // Assuming getStudentById is a function that fetches student details by ID
           const studentData = await getStudentById(editStudentId);
           console.log("Student data for editing:", studentData);
-         
         } catch (error) {
           console.error("Error fetching student for edit:", error);
         }
@@ -91,14 +91,37 @@ const StudentCard = () => {
     } else {
       console.log("No student selected for editing.");
     }
-  }, [editStudentId]); 
+  }, [editStudentId]);
 
   return (
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-6">Student List</h2>
 
-      {/* Table for displaying student data */}
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+      {/* Search Box */}
+      <div className="mb-6">
+        <input
+          type="text"
+          placeholder="Search Student by email..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // Reset to first page on search
+          }}
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        />
+        {searchTerm && (
+          <p className="text-sm text-gray-600 mt-2">
+            Found{" "}
+            <span className="font-semibold text-blue-600">
+              {filteredStudents.length}
+            </span>{" "}
+            student(s)
+          </p>
+        )}
+      </div>
+
+      {/* Table for displaying student data - Desktop */}
+      <div className="hidden md:block overflow-x-auto bg-white shadow-md rounded-lg">
         <table className="min-w-full table-auto">
           <thead className="bg-gray-100">
             <tr>
@@ -108,14 +131,15 @@ const StudentCard = () => {
               <th className="px-4 py-2 text-left text-gray-600">Fees</th>
               <th className="px-4 py-2 text-left text-gray-600">Status</th>
               <th className="px-4 py-2 text-left text-gray-600">Actions</th>
-              {/* New column for actions */}
             </tr>
           </thead>
           <tbody>
             {currentStudents.length === 0 ? (
               <tr>
                 <td colSpan="6" className="px-4 py-4 text-center text-gray-500">
-                  No students found.
+                  {searchTerm
+                    ? "No students found matching your search."
+                    : "No students found."}
                 </td>
               </tr>
             ) : (
@@ -171,7 +195,7 @@ const StudentCard = () => {
                       <Link to={`/students/${student._id}`}>
                         <button
                           onClick={() => handleEdit(student._id)}
-                          className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition"
+                          className="bg-yellow-500 text-white px-3 py-1 rounded-md hover:bg-yellow-600 transition text-sm"
                         >
                           Edit
                         </button>
@@ -181,7 +205,7 @@ const StudentCard = () => {
                     {/* Delete Button */}
                     <button
                       onClick={() => handleDelete(student._id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition"
+                      className="bg-red-600 text-white px-3 py-1 rounded-md hover:bg-red-700 transition text-sm"
                     >
                       Delete
                     </button>
@@ -191,6 +215,85 @@ const StudentCard = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Card View for Mobile */}
+      <div className="md:hidden space-y-4">
+        {currentStudents.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">
+            {searchTerm
+              ? "No students found matching your search."
+              : "No students found."}
+          </div>
+        ) : (
+          currentStudents.map((student, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-4 border-l-4 border-blue-500"
+            >
+              {/* Student Info */}
+              <div className="flex items-start gap-3 mb-4">
+                <img
+                  src={student.imageUrl ? student.imageUrl : imgurl}
+                  alt={student.name}
+                  className="w-12 h-12 rounded-full object-cover border border-gray-300"
+                />
+                <div className="flex-1">
+                  <h3 className="font-bold text-gray-800">{student.name}</h3>
+                  <p className="text-sm text-gray-600">{student.email}</p>
+                </div>
+              </div>
+
+              {/* Student Details */}
+              <div className="space-y-2 mb-4 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Batch Time:</span>
+                  <span className="font-medium text-gray-800">
+                    {student.batchTime}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Fees:</span>
+                  <span className="font-semibold text-gray-800">
+                    ${student.fees}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Status:</span>
+                  <span
+                    className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      student.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                  >
+                    {student.status}
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                {student._id !== PROTECTED_STUDENT_ID && (
+                  <Link to={`/students/${student._id}`} className="flex-1">
+                    <button
+                      onClick={() => handleEdit(student._id)}
+                      className="w-full bg-yellow-500 text-white px-3 py-2 rounded-md hover:bg-yellow-600 transition text-sm font-medium"
+                    >
+                      Edit
+                    </button>
+                  </Link>
+                )}
+                <button
+                  onClick={() => handleDelete(student._id)}
+                  className="flex-1 bg-red-600 text-white px-3 py-2 rounded-md hover:bg-red-700 transition text-sm font-medium"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
 
       {/* Pagination controls */}

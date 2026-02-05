@@ -9,7 +9,8 @@ import AppRoutes from "../routes/AppRoutes.jsx";
 const MainLayout = () => {
   const location = useLocation();
   const { isAuthenticated } = useSelector((state) => state.auth);
-
+  const { user } = useSelector((state) => state.auth);
+  
   // Hide layout on login or register pages OR if not authenticated
   const hideLayout =
     location.pathname === "/login" ||
@@ -26,15 +27,7 @@ const MainLayout = () => {
         <>
           {/* With Sidebar and Header */}
           <div className="flex flex-1 mt-16">
-            {/* Sidebar - Desktop Only */}
-            <div className="hidden lg:block">
-              <Sidebar />
-            </div>
-
-            {/* Mobile Sidebar */}
-            <div className="lg:hidden">
-              <Sidebar />
-            </div>
+            
 
             {/* Main Content */}
             <main className="flex-1 bg-gray-100 p-4 sm:p-6 overflow-y-auto">
